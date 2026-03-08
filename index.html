@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>SSC Super 30 Attendance</title>
+<title>SSC Super 30 Dashboard</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -15,37 +15,68 @@ background:#f4f6fb;
 }
 
 header{
-background:#111827;
+background:#0f172a;
 color:white;
-padding:20px;
+padding:15px;
 text-align:center;
-font-size:24px;
+font-size:22px;
 }
 
 .container{
-width:90%;
+width:95%;
 margin:auto;
-margin-top:30px;
+margin-top:20px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+select,input{
+padding:8px;
+font-size:14px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.cards{
+display:flex;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.card{
+flex:1;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+text-align:center;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
 background:white;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
-border-radius:10px;
-overflow:hidden;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
 th{
 background:#2563eb;
 color:white;
-padding:12px;
+padding:8px;
+font-size:13px;
 }
 
 td{
-padding:10px;
+padding:6px;
 border-bottom:1px solid #eee;
+font-size:12px;
+text-align:center;
 }
 
 tr:hover{
@@ -59,10 +90,42 @@ background:#f1f5f9;
 <body>
 
 <header>
-SSC Super 30 Student Attendance
+SSC Super 30 Attendance Dashboard
 </header>
 
 <div class="container">
+
+<div class="topbar">
+
+<select id="monthSelect">
+<option value="December">December</option>
+<option value="January">January</option>
+<option value="February">February</option>
+<option value="March">March</option>
+</select>
+
+<input type="text" id="search" placeholder="Search student">
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+Total Students
+<h2 id="total">0</h2>
+</div>
+
+<div class="card">
+Present Days
+<h2 id="present">0</h2>
+</div>
+
+<div class="card">
+Attendance %
+<h2 id="percent">0%</h2>
+</div>
+
+</div>
 
 <table id="sheetTable"></table>
 
@@ -72,12 +135,16 @@ SSC Super 30 Student Attendance
 
 const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSMG_Yry35kTzPBFrdolRgpHFC2FxomWBfaJ7q0tymYiwEIsJRsEUta9K_brdBuUL_-l3a6w10DwvcD/pub?output=csv";
 
+function loadData(){
+
 fetch(sheetURL)
 .then(res=>res.text())
 .then(data=>{
 
 let rows=data.split("\n");
 let table=document.getElementById("sheetTable");
+
+table.innerHTML="";
 
 rows.forEach((row,i)=>{
 
@@ -93,7 +160,35 @@ tr+="<td>"+col+"</td>";
 });
 
 tr+="</tr>";
+
 table.innerHTML+=tr;
+
+});
+
+document.getElementById("total").innerText=rows.length-1;
+document.getElementById("present").innerText=rows.length-1;
+document.getElementById("percent").innerText="100%";
+
+});
+
+}
+
+loadData();
+
+setInterval(loadData,30000);
+
+document.getElementById("search").addEventListener("keyup",function(){
+
+let filter=this.value.toLowerCase();
+let rows=document.querySelectorAll("#sheetTable tr");
+
+rows.forEach((row,i)=>{
+
+if(i==0)return;
+
+let text=row.innerText.toLowerCase();
+
+row.style.display=text.includes(filter)?"":"none";
 
 });
 
