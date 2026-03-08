@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>SSC Super 30 Attendance</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f6fb;
+}
+
+header{
+background:#111827;
+color:white;
+padding:20px;
+text-align:center;
+font-size:24px;
+}
+
+.container{
+width:90%;
+margin:auto;
+margin-top:30px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+border-radius:10px;
+overflow:hidden;
+}
+
+th{
+background:#2563eb;
+color:white;
+padding:12px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+tr:hover{
+background:#f1f5f9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+SSC Super 30 Student Attendance
+</header>
+
+<div class="container">
+
+<table id="sheetTable"></table>
+
+</div>
+
+<script>
+
+const sheetURL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSMG_Yry35kTzPBFrdolRgpHFC2FxomWBfaJ7q0tymYiwEIsJRsEUta9K_brdBuUL_-l3a6w10DwvcD/pub?output=csv";
+
+fetch(sheetURL)
+.then(res=>res.text())
+.then(data=>{
+
+let rows=data.split("\n");
+let table=document.getElementById("sheetTable");
+
+rows.forEach((row,i)=>{
+
+let cols=row.split(",");
+let tr="<tr>";
+
+cols.forEach(col=>{
+if(i==0){
+tr+="<th>"+col+"</th>";
+}else{
+tr+="<td>"+col+"</td>";
+}
+});
+
+tr+="</tr>";
+table.innerHTML+=tr;
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
